@@ -1,0 +1,554 @@
+# MASTER PROMPT — AI-POWERED AGRICULTURE CROP ADVISORY ASSISTANT
+
+## 1. Header & System Persona Role
+
+You are an **Expert Prompt Engineer, AI Systems Architect, Principal Full-Stack Engineer, Database Architect, UI/UX Engineer, and Application Security Engineer**.
+
+Your task is to design and implement a complete, production-ready web application called:
+
+**AI-Powered Agriculture Crop Advisory Assistant**
+
+You must act as the complete engineering team and build the application end-to-end.
+
+Do not provide only explanations, pseudo-code, wireframes, partial implementations, or placeholders.
+
+You must:
+
+* Analyze the requirements.
+* Design the complete application architecture.
+* Create the frontend.
+* Create the backend.
+* Configure Supabase PostgreSQL.
+* Configure Supabase Authentication.
+* Implement secure server-side Gemini API integration using `@google/genai`.
+* Implement Zod validation.
+* Implement responsive UI using Tailwind CSS.
+* Implement database migrations/schema.
+* Implement Row Level Security.
+* Implement all required API routes.
+* Implement AI advisory generation.
+* Implement loading, empty, success, and error states.
+* Implement proper authentication and authorization.
+* Implement form validation.
+* Implement advisory history.
+* Implement user profile handling.
+* Implement production-grade security practices.
+* Ensure the application can be run locally and deployed.
+
+Use real working code throughout the project.
+
+Do not leave TODO comments, fake API calls, placeholder functions, incomplete components, or unimplemented routes.
+
+If a design decision is not explicitly specified, choose the most practical production-ready solution and continue without asking unnecessary questions.
+
+---
+
+# 2. Core Mission Directive
+
+Build a full-stack AI-powered agriculture advisory platform that helps farmers and agriculture students/users receive personalized crop recommendations and farming guidance based on agricultural conditions supplied through a structured form.
+
+The application should collect relevant agricultural information such as:
+
+* Location
+* Soil type
+* Soil pH
+* Temperature
+* Rainfall
+* Humidity
+* Available irrigation
+* Season
+* Land size
+* Previous crop
+* Farming objective
+* Optional crop preference
+* Additional observations
+
+The system must send the validated information securely to the backend.
+
+The backend must use Google's Gemini API through the official `@google/genai` SDK.
+
+Gemini must generate structured agricultural recommendations rather than unrestricted conversational output.
+
+The application must display the advisory in a clear, understandable dashboard.
+
+Users must also be able to view their previous advisory records.
+
+The system must prioritize:
+
+1. Practical usefulness.
+2. Data validation.
+3. Explainability.
+4. Safety.
+5. Security.
+6. Consistent AI output.
+7. Responsive design.
+8. Maintainable architecture.
+
+The AI must never pretend that its recommendations are guaranteed agricultural outcomes.
+
+For potentially harmful or high-stakes agricultural situations, the system should clearly recommend consultation with a qualified local agricultural expert.
+
+---
+
+# 3. Product Goal
+
+Create a modern web application that acts as a digital agricultural assistant.
+
+The core user journey is:
+
+**Register/Login → Enter Farm Details → Validate Data → Generate AI Advisory → View Recommendations → Save Advisory → View History**
+
+The advisory should help users understand:
+
+* Which crops may be suitable.
+* Why those crops may be suitable.
+* Expected growing conditions.
+* Basic cultivation considerations.
+* Irrigation considerations.
+* Nutrient/soil considerations.
+* Potential pest/disease risks.
+* General precautions.
+* Recommended next steps.
+
+The UI should be understandable to users with limited technical knowledge.
+
+Avoid unnecessarily complex agricultural terminology.
+
+When technical terminology is necessary, explain it in simple language.
+
+---
+
+# 4. Mandatory Features
+
+Implement all of the following.
+
+### Authentication
+
+Implement:
+
+* User registration.
+* User login.
+* User logout.
+* Persistent authenticated session.
+* Protected application routes.
+* Authentication state handling.
+* User profile retrieval.
+* Unauthorized-user handling.
+
+Use Supabase Auth.
+
+Support email/password authentication.
+
+### Farm Advisory Form
+
+Create a complete form containing:
+
+* Farm/location name.
+* State/region.
+* District.
+* Soil type.
+* Soil pH.
+* Average temperature.
+* Average rainfall.
+* Humidity.
+* Irrigation availability.
+* Current season.
+* Land size.
+* Land-size unit.
+* Previous crop.
+* Farming objective.
+* Preferred crop, optional.
+* Additional notes, optional.
+
+Use appropriate controls:
+
+* Text inputs.
+* Number inputs.
+* Select/dropdown fields.
+* Radio buttons.
+* Textarea.
+* Validation messages.
+
+### AI Crop Recommendation
+
+Generate:
+
+* Top recommended crops.
+* Suitability score.
+* Reasons for recommendation.
+* Required conditions.
+* Soil considerations.
+* Water requirements.
+* Basic nutrient considerations.
+* Potential risks.
+* General preventive measures.
+* Suggested next steps.
+
+### Advisory History
+
+Users must be able to:
+
+* View previous advisories.
+* Open a specific advisory.
+* See creation date.
+* See the farm conditions used.
+* See generated recommendations.
+* Delete their own advisory.
+
+### Dashboard
+
+The dashboard must contain:
+
+* Welcome section.
+* Quick action to create advisory.
+* Recent advisories.
+* Advisory count.
+* User information.
+* Helpful agricultural information.
+
+### Responsive Design
+
+The application must work properly on:
+
+* Desktop.
+* Laptop.
+* Tablet.
+* Mobile.
+
+Do not build desktop-only layouts.
+
+---
+
+# 5. Technology Requirements
+
+The implementation MUST use the following technology stack.
+
+## Frontend
+
+Use:
+
+* React.js
+* Vite
+* React Router
+* Tailwind CSS
+* Modern JavaScript or TypeScript
+
+Prefer TypeScript for production reliability.
+
+Use reusable components.
+
+Do not place the entire application inside a single React component.
+
+## Backend
+
+Use:
+
+* Node.js
+* Express.js
+* TypeScript where practical
+
+Create REST APIs.
+
+Use middleware for:
+
+* Authentication.
+* Validation.
+* Error handling.
+* Request logging where appropriate.
+
+## Database & Authentication
+
+Use:
+
+* Supabase
+* PostgreSQL
+* Supabase Auth
+* Supabase Row Level Security
+
+Do not create a custom password authentication system.
+
+Never store passwords manually.
+
+## AI
+
+Use:
+
+`@google/genai`
+
+Gemini API calls MUST occur server-side.
+
+Never expose the Gemini API key to the browser.
+
+## Validation
+
+Use:
+
+`zod`
+
+Validate:
+
+* API request bodies.
+* Form data.
+* AI responses.
+* Database-facing objects where appropriate.
+
+## Styling
+
+Use:
+
+`Tailwind CSS`
+
+Build a clean agriculture-themed interface.
+
+Use accessible contrast and readable typography.
+
+Do not overuse visual effects.
+
+---
+
+# 6. Application Pages (Routes)
+
+Implement the following routes.
+
+### Public Routes
+
+`/`
+
+Landing page.
+
+Include:
+
+* Product introduction.
+* Benefits.
+* How it works.
+* Main CTA.
+* Authentication CTA.
+
+`/login`
+
+Login page.
+
+`/register`
+
+Registration page.
+
+### Protected Routes
+
+`/dashboard`
+
+Main authenticated dashboard.
+
+`/advisory/new`
+
+Create new crop advisory.
+
+`/advisory/:id`
+
+View individual advisory.
+
+`/history`
+
+View advisory history.
+
+`/profile`
+
+View/edit user profile.
+
+### Fallback
+
+`*`
+
+Create a proper 404 page.
+
+---
+
+# 7. User Flow
+
+Implement the following complete flow.
+
+## Step 1 — Landing Page
+
+User visits `/`.
+
+Display:
+
+* Application name.
+* Short description.
+* Main CTA.
+* Explanation of AI-assisted crop advisory.
+* Feature overview.
+
+User selects:
+
+**Get Started**
+
+If unauthenticated, redirect to `/login` or `/register`.
+
+If authenticated, redirect to `/dashboard`.
+
+## Step 2 — Registration
+
+User enters:
+
+* Email.
+* Password.
+* Password confirmation.
+
+Validate client-side.
+
+Submit to Supabase Auth.
+
+After successful registration, establish session and redirect to dashboard.
+
+## Step 3 — Login
+
+User enters:
+
+* Email.
+* Password.
+
+Authenticate with Supabase.
+
+On success:
+
+`/dashboard`
+
+## Step 4 — Dashboard
+
+Show:
+
+* User greeting.
+* Create Advisory button.
+* Advisory statistics.
+* Recent advisory cards.
+
+## Step 5 — Farm Details
+
+User opens:
+
+`/advisory/new`
+
+Complete the agriculture form.
+
+Validate all required fields.
+
+## Step 6 — Generate Advisory
+
+Submit the form to the Express backend.
+
+Backend:
+
+1. Authenticate user.
+2. Validate request with Zod.
+3. Construct AI request.
+4. Call Gemini.
+5. Validate Gemini response.
+6. Store advisory in PostgreSQL.
+7. Return structured advisory.
+
+## Step 7 — Display Advisory
+
+Show:
+
+* Recommended crops.
+* Suitability.
+* Explanation.
+* Growing requirements.
+* Water requirements.
+* Soil considerations.
+* Risks.
+* Precautions.
+* Next steps.
+
+## Step 8 — History
+
+User opens `/history`.
+
+Display previous advisories.
+
+## Step 9 — Advisory Detail
+
+User opens `/advisory/:id`.
+
+Display full advisory and original farm conditions.
+
+## Step 10 — Delete
+
+Allow users to delete only their own advisories.
+
+---
+
+# 8. Target Domains & Categorization
+
+The application must organize agricultural advisory information into the following domains.
+
+## Crop Selection
+
+Examples:
+
+* Rice.
+* Wheat.
+* Maize.
+* Cotton.
+* Soybean.
+* Sugarcane.
+* Pulses.
+* Vegetables.
+* Fruits.
+* Oilseeds.
+
+The AI should not be restricted to only these examples.
+
+## Soil
+
+Consider:
+
+* Soil type.
+* Soil pH.
+* Soil fertility indicators.
+* Drainage.
+* General suitability.
+
+## Climate
+
+Consider:
+
+* Temperature.
+* Rainfall.
+* Humidity.
+* Season.
+
+## Water
+
+Consider:
+
+* Irrigation availability.
+* General water requirements.
+* Water stress considerations.
+
+## Farming Objective
+
+Examples:
+
+* Food production.
+* Commercial farming.
+* Higher-value crop exploration.
+* Sustainable farming.
+* Crop rotation.
+* General crop selection.
+
+## Risk
+
+Consider:
+
+* Drought.
+* Excess rainfall.
+* Waterlogging.
+* Temperature stress.
+* General pest/disease risk.
+* Soil suitability concerns.
+
+The AI should clearly distinguish between:
+
+* Known user-provided information.
+* General agricultural
