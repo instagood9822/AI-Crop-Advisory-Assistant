@@ -10,6 +10,12 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Authenticated dashboard summaries
+  - name: advisories
+    description: Authenticated crop advisory records
+  - name: profile
+    description: Authenticated user profile
 paths:
   /healthz:
     get:
@@ -24,7 +30,182 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get the authenticated user's dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /advisories:
+    get:
+      operationId: listAdvisories
+      tags: [advisories]
+      summary: List the authenticated user's advisories
+      responses:
+        "200":
+          description: Advisory list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdvisorySummary"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createAdvisory
+      tags: [advisories]
+      summary: Generate and save a new crop advisory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvisoryInput"
+      responses:
+        "201":
+          description: Created advisory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advisory"
+        "400":
+          description: Invalid advisory input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "502":
+          description: Advisory generation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /advisories/{id}:
+    get:
+      operationId: getAdvisory
+      tags: [advisories]
+      summary: Get one advisory
+      parameters:
+        - $ref: "#/components/parameters/AdvisoryId"
+      responses:
+        "200":
+          description: Advisory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advisory"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Advisory not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteAdvisory
+      tags: [advisories]
+      summary: Delete one advisory owned by the current user
+      parameters:
+        - $ref: "#/components/parameters/AdvisoryId"
+      responses:
+        "204":
+          description: Advisory deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Advisory not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get the current user's profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateProfile
+      tags: [profile]
+      summary: Update the current user's profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdate"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "400":
+          description: Invalid profile input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
+  parameters:
+    AdvisoryId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +214,222 @@ components:
           type: string
       required:
         - status
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: ["string", "null"]
+        lastName:
+          type: ["string", "null"]
+        displayName:
+          type: string
+      required: [id, email, displayName]
+    ProfileUpdate:
+      type: object
+      properties:
+        firstName:
+          type: ["string", "null"]
+          maxLength: 80
+        lastName:
+          type: ["string", "null"]
+          maxLength: 80
+      additionalProperties: false
+    AdvisoryInput:
+      type: object
+      properties:
+        farmName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        stateRegion:
+          type: string
+          minLength: 1
+          maxLength: 120
+        district:
+          type: string
+          minLength: 1
+          maxLength: 120
+        soilType:
+          type: string
+          minLength: 1
+          maxLength: 80
+        soilPh:
+          type: number
+          minimum: 0
+          maximum: 14
+        averageTemperature:
+          type: number
+          minimum: -50
+          maximum: 70
+        averageRainfall:
+          type: number
+          minimum: 0
+          maximum: 10000
+        humidity:
+          type: number
+          minimum: 0
+          maximum: 100
+        irrigationAvailability:
+          type: string
+          enum: [none, limited, reliable, abundant]
+        season:
+          type: string
+          enum: [kharif, rabi, zaid, spring, summer, autumn, winter, year-round]
+        landSize:
+          type: number
+          exclusiveMinimum: 0
+          maximum: 1000000
+        landUnit:
+          type: string
+          enum: [acres, hectares, bigha]
+        previousCrop:
+          type: string
+          minLength: 1
+          maxLength: 100
+        farmingObjective:
+          type: string
+          enum: [food, commercial, high-value, sustainable, rotation, general]
+        preferredCrop:
+          type: ["string", "null"]
+          maxLength: 100
+        additionalNotes:
+          type: ["string", "null"]
+          maxLength: 2000
+      required:
+        - farmName
+        - stateRegion
+        - district
+        - soilType
+        - soilPh
+        - averageTemperature
+        - averageRainfall
+        - humidity
+        - irrigationAvailability
+        - season
+        - landSize
+        - landUnit
+        - previousCrop
+        - farmingObjective
+    RecommendedCrop:
+      type: object
+      properties:
+        name:
+          type: string
+        suitabilityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        whyItFits:
+          type: string
+        growingConditions:
+          type: array
+          items:
+            type: string
+        soilConsiderations:
+          type: string
+        waterRequirements:
+          type: string
+        nutrientConsiderations:
+          type: string
+        potentialRisks:
+          type: array
+          items:
+            type: string
+        preventiveMeasures:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - suitabilityScore
+        - whyItFits
+        - growingConditions
+        - soilConsiderations
+        - waterRequirements
+        - nutrientConsiderations
+        - potentialRisks
+        - preventiveMeasures
+    AdvisoryResult:
+      type: object
+      properties:
+        summary:
+          type: string
+        recommendedCrops:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/RecommendedCrop"
+        generalPrecautions:
+          type: array
+          items:
+            type: string
+        suggestedNextSteps:
+          type: array
+          items:
+            type: string
+        expertConsultationRecommended:
+          type: boolean
+        safetyNote:
+          type: string
+      required:
+        - summary
+        - recommendedCrops
+        - generalPrecautions
+        - suggestedNextSteps
+        - expertConsultationRecommended
+        - safetyNote
+    Advisory:
+      allOf:
+        - $ref: "#/components/schemas/AdvisorySummary"
+        - type: object
+          properties:
+            userId:
+              type: string
+            farmConditions:
+              $ref: "#/components/schemas/AdvisoryInput"
+            result:
+              $ref: "#/components/schemas/AdvisoryResult"
+          required: [userId, farmConditions, result]
+    AdvisorySummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        farmName:
+          type: string
+        location:
+          type: string
+        season:
+          type: string
+        topCrop:
+          type: string
+        suitabilityScore:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, farmName, location, season, topCrop, suitabilityScore, createdAt]
+    DashboardSummary:
+      type: object
+      properties:
+        profile:
+          $ref: "#/components/schemas/Profile"
+        advisoryCount:
+          type: integer
+        recentAdvisories:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdvisorySummary"
+      required: [profile, advisoryCount, recentAdvisories]
 

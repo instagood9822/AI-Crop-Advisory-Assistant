@@ -1,6 +1,6 @@
-# [Project name]
+# CropWise Advisory
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+CropWise turns farm conditions into explainable crop recommendations and keeps each user's advisory history.
 
 ## Run & Operate
 
@@ -9,7 +9,7 @@ _Replace the heading above with the project's name, and this line with one sente
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required env: `DATABASE_URL`, Clerk-managed auth variables, and `GEMINI_API_KEY`
 
 ## Stack
 
@@ -22,23 +22,31 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/crop-advisor/src/` — React routes, authenticated shell, advisory form, history, profile, and theme
+- `artifacts/api-server/src/routes/cropAdvisories.ts` — protected dashboard, profile, advisory CRUD, and Gemini generation routes
+- `lib/api-spec/openapi.yaml` — API contract source of truth
+- `lib/db/src/schema/advisories.ts` — advisory persistence schema
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Clerk owns browser sessions and account lifecycle; the API enforces ownership from the Clerk user ID.
+- Gemini calls run only in the API server; generated output is validated before it is saved or returned.
+- Advisory farm inputs and structured AI results are stored together so history remains explainable and reproducible.
+- The app uses Replit PostgreSQL with Drizzle rather than adding an external database service.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Users can create farm advisories, review ranked crops with conditions and risks, revisit saved recommendations, delete their own records, and update their profile.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+No project-specific preferences recorded.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run API codegen after changing `lib/api-spec/openapi.yaml`.
+- Browser auth is cookie-based; do not add bearer-token handling to the web client.
+- Live advisory generation requires `GEMINI_API_KEY`; never expose it in client code.
 
 ## Pointers
 

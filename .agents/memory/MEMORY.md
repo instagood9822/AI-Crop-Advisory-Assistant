@@ -1,0 +1,1 @@
+- [AI and auth provisioning](ai-auth-provisioning.md) — use managed Clerk; request Gemini key securely if built-in AI access is unavailable.
